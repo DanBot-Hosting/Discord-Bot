@@ -38,15 +38,32 @@ const event: Event = {
                 )
                 .setTimestamp()
 
-            const oldLog = new Discord.EmbedBuilder()
-                .setColor(client.config_embeds.default)
-                .setTitle("Old Message")
-                .setDescription(cap(`${oldMessage.content || "*No content.*"}`, 4000))
+            const oldContent = oldMessage.content || "*No content.*";
+            const newContent = newMessage.content || "*No content.*";
 
-            const newLog = new Discord.EmbedBuilder()
-                .setColor(client.config_embeds.default)
-                .setTitle("New Message")
-                .setDescription(cap(`${newMessage.content || "*No content.*"}`, 4000))
+            const embeds = [messageInfo];
+            const files = [];
+
+            if (oldContent !== newContent) {
+                if (oldContent.length + newContent.length > 5000) {
+                    files.push(
+                        new Discord.AttachmentBuilder(Buffer.from(oldContent), { name: "oldMessage.txt" }),
+                        new Discord.AttachmentBuilder(Buffer.from(newContent), { name: "newMessage.txt" })
+                    );
+                } else {
+                    const oldLog = new Discord.EmbedBuilder()
+                        .setColor(client.config_embeds.default)
+                        .setTitle("Old Message")
+                        .setDescription(oldContent);
+
+                    const newLog = new Discord.EmbedBuilder()
+                        .setColor(client.config_embeds.default)
+                        .setTitle("New Message")
+                        .setDescription(newContent);
+                        
+                    embeds.push(oldLog, newLog);
+                }
+            }
 
             const buttons: any = new Discord.ActionRowBuilder()
                 .addComponents (
@@ -56,7 +73,7 @@ const event: Event = {
                         .setURL(oldMessage.url)
                 )
 
-            await channel.send({ embeds: oldMessage.content === newMessage.content ? [messageInfo] : [messageInfo, oldLog, newLog], components: [buttons] });
+            await channel.send({ embeds, files, components: [buttons] });
         } catch(err) {
             client.logError(err);
         }
