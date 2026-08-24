@@ -82,12 +82,17 @@ const command: Command = {
             // Generate output
             const output = [];
 
-            for(const message of result.values()) {
+            for(const messageId of result.keys()) {
+                // bulkDelete() returns partials for messages that are not cached, so prefer the fetched message
+                const message = messages.get(messageId) ?? result.get(messageId);
+
+                if(!message) continue;
+
                 const createdAt = message.createdAt.toUTCString();
-                const author = message.author.tag;
-                const id = message.author.id;
-                const embeds = message.embeds.length;
-                const attachments = message.attachments.size;
+                const author = message.author?.tag ?? "Unknown user";
+                const id = message.author?.id ?? "unknown";
+                const embeds = message.embeds?.length ?? 0;
+                const attachments = message.attachments?.size ?? 0;
                 const content = message.content || "";
 
                 output.push(`[${createdAt}] ${author} (${id}) [${embeds} embed${embeds === 1 ? "" : "s"}, ${attachments} attachment${attachments === 1 ? "" : "s"}]: ${content}`);
