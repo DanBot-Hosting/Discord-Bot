@@ -48,5 +48,5 @@ export = async (client: ExtendedClient) => {
         message.reply({ embeds: [error] });
     }
 
-    require("dotenv").config();
+    require("dotenv").config({ quiet: true });
 }

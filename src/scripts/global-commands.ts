@@ -2,9 +2,10 @@ import ExtendedClient from "../classes/ExtendedClient";
 import { REST, Routes } from "discord.js";
 
 import fs from "fs";
+import { enabled as databaseEnabled } from "../util/database";
 import { getDirs } from "../util/functions";
 
-require("dotenv").config();
+require("dotenv").config({ quiet: true });
 
 export default async function (client: ExtendedClient) {
     const commands: any[] = [];
@@ -40,7 +41,7 @@ export default async function (client: ExtendedClient) {
 
         for(const file of files) {
             const command = require(`../commands/${file}`);
-            if(command.enabled) commands.push(command);
+            if(command.enabled && !(command.database && !databaseEnabled())) commands.push(command);
         }
     }
 
@@ -49,7 +50,7 @@ export default async function (client: ExtendedClient) {
 
         for(const file of files) {
             const command = require(`../commands/${dir}/${file}`);
-            if(command.enabled) commands.push(command);
+            if(command.enabled && !(command.database && !databaseEnabled())) commands.push(command);
         }
     }
 }

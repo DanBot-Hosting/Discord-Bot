@@ -2,10 +2,13 @@ import { Snowflake } from "discord.js";
 import ExtendedClient from "../classes/ExtendedClient";
 
 import { premium } from "../config";
+import { enabled as databaseEnabled } from "./database";
 
 import User from "../models/User";
 
 export async function add(user: Snowflake, amount: number, client: ExtendedClient): Promise<number> {
+    if(!databaseEnabled()) throw new Error("Credit cannot be changed without a database.");
+
     const data = await User.findOne({ _id: user }) || new User({ _id: user, credit_amount: 0, credit_used: 0 });
 
     if(amount <= 0) throw new Error("Cannot add zero or negative credit.");
@@ -24,6 +27,8 @@ export async function add(user: Snowflake, amount: number, client: ExtendedClien
 }
 
 export async function fix(user: Snowflake): Promise<number> {
+    if(!databaseEnabled()) return 0;
+
     const data = await User.findOne({ _id: user }) || { credit_used: 0 };
 
     // TODO: Fetch user's premium servers & fix count
@@ -32,6 +37,8 @@ export async function fix(user: Snowflake): Promise<number> {
 }
 
 export async function get(user: Snowflake): Promise<PremiumData> {
+    if(!databaseEnabled()) return { donated: 0, used: 0 };
+
     const data = await User.findOne({ _id: user }) || { credit_amount: 0, credit_used: 0 };
 
     return {
@@ -45,6 +52,8 @@ export function getPrice(): number {
 }
 
 export async function remove(user: Snowflake, amount: number, client: ExtendedClient): Promise<number> {
+    if(!databaseEnabled()) throw new Error("Credit cannot be changed without a database.");
+
     const data = await User.findOne({ _id: user }) || new User({ _id: user, credit_amount: 0, credit_used: 0 });
 
     if(amount <= 0) throw new Error("Cannot remove zero or negative credit.");
@@ -65,6 +74,8 @@ export async function remove(user: Snowflake, amount: number, client: ExtendedCl
 }
 
 export async function set(user: Snowflake, amount: number, client: ExtendedClient): Promise<number> {
+    if(!databaseEnabled()) throw new Error("Credit cannot be changed without a database.");
+
     const data = await User.findOne({ _id: user }) || new User({ _id: user, credit_amount: 0, credit_used: 0 });
 
     if(amount < 0) throw new Error("Cannot set credit to a negative amount.");

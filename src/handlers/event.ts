@@ -29,5 +29,5 @@ export = async (client: ExtendedClient, Discord: typeof import("discord.js")) =>
         console.error(err);
     }
 
-    require("dotenv").config();
+    require("dotenv").config({ quiet: true });
 }
