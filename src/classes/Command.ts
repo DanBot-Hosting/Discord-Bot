@@ -10,6 +10,7 @@ export default class Command {
     public requiredRoles: Role[];
     public cooldown: number;
     public enabled: boolean;
+    public database?: boolean;
     public deferReply: boolean;
     public ephemeral: boolean;
     public execute: Function;

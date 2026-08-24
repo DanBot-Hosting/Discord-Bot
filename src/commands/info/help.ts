@@ -5,6 +5,7 @@ import { ChatInputCommandInteraction } from "discord.js";
 import Roles, { Role } from "../../classes/Roles";
 
 import { emojis as emoji } from "../../config";
+import { enabled as databaseEnabled } from "../../util/database";
 import fs from "fs";
 import { getDirs } from "../../util/functions";
 import getRoles from "../../functions/roles/get";
@@ -43,6 +44,7 @@ const command: Command = {
 
                     if(command.name) {
                         if(!command.enabled) continue;
+                        if(command.database && !databaseEnabled()) continue;
 
                         if(command.default_member_permissions) {
                             if(!interaction.member.permissions.has(command.default_member_permissions)) continue;
@@ -75,6 +77,7 @@ const command: Command = {
 
                     if(command.name) {
                         if(!command.enabled) continue;
+                        if(command.database && !databaseEnabled()) continue;
 
                         if(command.default_member_permissions) {
                             if(!interaction.member.permissions.has(command.default_member_permissions)) continue;
@@ -122,6 +125,7 @@ const command: Command = {
 
             if(command) {
                 if(!command.enabled) return await interaction.editReply({ embeds: [help] });
+                if(command.database && !databaseEnabled()) return await interaction.editReply({ embeds: [help] });
 
                 const description = command.description ?? "N/A";
                 const botPermissions = command.botPermissions.length ? `\`${command.botPermissions.join("\`, \`")}\`` : "N/A";

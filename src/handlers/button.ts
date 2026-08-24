@@ -48,5 +48,5 @@ export = async (client: ExtendedClient) => {
         interaction.deferred || interaction.replied ? await interaction.editReply({ embeds: [error] }) : await interaction.reply({ embeds: [error], flags: MessageFlags.Ephemeral });
     }
 
-    require("dotenv").config();
+    require("dotenv").config({ quiet: true });
 }

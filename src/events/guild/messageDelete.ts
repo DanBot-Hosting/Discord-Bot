@@ -1,9 +1,17 @@
 import Event from "../../classes/Event";
 import ExtendedClient from "../../classes/ExtendedClient";
-import { Message, PermissionResolvable, TextChannel } from "discord.js";
+import { GuildPremiumTier, Message, PermissionResolvable, TextChannel } from "discord.js";
 
 import { channels, main, starboard } from "../../config";
 import cap from "../../util/cap";
+
+// Maximum size of a single upload, in bytes, for each boost tier
+const uploadLimits: Record<GuildPremiumTier, number> = {
+    [GuildPremiumTier.None]: 10485760,
+    [GuildPremiumTier.Tier1]: 10485760,
+    [GuildPremiumTier.Tier2]: 52428800,
+    [GuildPremiumTier.Tier3]: 104857600
+};
 
 const event: Event = {
     name: "messageDelete",
@@ -34,7 +42,35 @@ const event: Event = {
 
             if(message.content) log.setDescription(cap(message.content, 4000));
 
-            if(!main.logIgnoredChannels.includes(message.channel.id)) await channel.send({ embeds: [log] });
+            if(!main.logIgnoredChannels.includes(message.channel.id)) {
+                const canAttach = channel.permissionsFor(message.guild.members.me)?.has("AttachFiles") ?? false;
+                const uploadLimit = uploadLimits[message.guild.premiumTier] ?? uploadLimits[GuildPremiumTier.None];
+
+                const attachments = canAttach ? [...message.attachments.values()].filter(attachment => attachment.size <= uploadLimit) : [];
+                const files: InstanceType<typeof Discord.AttachmentBuilder>[] = [];
+
+                for(const attachment of attachments) {
+                    // Handed a URL, discord.js fetches it without checking the status, so a
+                    // purged attachment would be re-uploaded as the CDN's error page
+                    const res = await fetch(attachment.url);
+                    if(!res.ok) continue;
+
+                    files.push(new Discord.AttachmentBuilder(Buffer.from(await res.arrayBuffer()), { name: attachment.name }));
+                }
+
+                // Anything the bot could not re-upload is noted on the embed instead
+                const skipped = message.attachments.size - files.length;
+
+                if(skipped > 0) log.addFields({ name: "Not Re-uploaded", value: `${skipped}`, inline: true });
+
+                // A failed upload should never cost us the log entry itself
+                try {
+                    await channel.send({ embeds: [log], files });
+                } catch(err) {
+                    if(files.length < 1) throw err;
+                    await channel.send({ embeds: [log] });
+                }
+            }
 
             // Ignore messages if the bot does not have the required permissions
             if(!message.guild.members.me.permissions.has(requiredPerms)) return;

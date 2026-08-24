@@ -5,6 +5,7 @@ import Command from "../../classes/Command";
 
 import Roles, { Role } from "../../classes/Roles";
 import { emojis as emoji } from "../../config";
+import { enabled as databaseEnabled } from "../database";
 import getRoles from "../../functions/roles/get";
 import { noPermissionCommand } from "../embeds";
 
@@ -35,6 +36,15 @@ export = async (client: ExtendedClient, Discord: typeof import("discord.js"), in
                 .setDescription(`${emoji.cross} This command has been disabled!`)
 
             await interaction.reply({ embeds: [disabled], flags: MessageFlags.Ephemeral });
+            return;
+        }
+
+        if(command.database && !databaseEnabled()) {
+            const noDatabase = new Discord.EmbedBuilder()
+                .setColor(client.config_embeds.error)
+                .setDescription(`${emoji.cross} This command needs a database, but none is configured!`)
+
+            await interaction.reply({ embeds: [noDatabase], flags: MessageFlags.Ephemeral });
             return;
         }
 

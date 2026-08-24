@@ -15,6 +15,7 @@ const command: Command = {
     requiredRoles: ["admin"],
     cooldown: 10,
     enabled: true,
+    database: true,
     deferReply: true,
     ephemeral: false,
     async execute(interaction: ChatInputCommandInteraction, client: ExtendedClient, Discord: typeof import("discord.js")) {
