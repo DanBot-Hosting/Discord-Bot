@@ -11,7 +11,7 @@
   "author": "DanBot Hosting",
   "license": "MIT",
   "dependencies": {
-    "@sentry/node": "^10.75.3",
+    "@sentry/node": "^11.0.0",
     "axios": "^1.20.0",
     "discord.js": "^14.27.0",
     "dotenv": "^18.0.3",
