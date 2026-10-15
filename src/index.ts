@@ -66,7 +66,6 @@ client.config_roles = config.roles;
 client.buttons = new Discord.Collection();
 client.commands = new Discord.Collection();
 client.events = new Discord.Collection();
-client.keywords = new Discord.Collection();
 client.legacyCommands = new Discord.Collection();
 
 import { loadHandlers } from "./util/functions";

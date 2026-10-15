@@ -2,7 +2,6 @@ import Event from "../../classes/Event";
 import ExtendedClient from "../../classes/ExtendedClient";
 import { ChannelType, Message, PermissionResolvable, TextChannel } from "discord.js";
 
-import Keyword from "../../classes/Keyword";
 import LegacyCommand from "../../classes/LegacyCommand";
 
 import cap from "../../util/cap";
@@ -108,62 +107,6 @@ const event: Event = {
                 await message.react("👎");
                 return;
             }
-
-            // Keyword handler
-            // if(!message.content.toLowerCase().startsWith(main.legacyPrefix.toLowerCase())) {
-            //     const args = message.content.toLowerCase().split(/ +/g);
-
-            //     // Extract text only from the message
-            //     args.forEach((arg: string, index: number) => { args[index] = arg.replace(/[^a-zA-Z0-9]/g, "") });
-            //     // Remove empty arguments
-            //     args.forEach((arg: string, index: number) => { if(!arg) args.splice(index, 1) });
-
-            //     const keywords = client.keywords.filter((keyword: Keyword) => {
-            //         if(keyword.matchAll) {
-            //             // If the message includes all of the keywords, continue
-            //             return keyword.keywords.every((k: string) => args.includes(k.toLowerCase()));
-            //         } else {
-            //             // If the message includes any of the keywords, continue
-            //             return keyword.keywords.some((k: string) => args.includes(k.toLowerCase()));
-            //         }
-            //     })
-
-            //     const keyword = keywords.sort((a: Keyword, b: Keyword) => { return b.keywords.filter((k: string) => args.includes(k.toLowerCase())).length - a.keywords.filter((k: string) => args.includes(k.toLowerCase())).length }).first();
-
-            //     if(!keyword) return;
-            //     if(!keyword.enabled) return;
-
-            //     const matched = keyword.keywords.filter((k: string) => args.includes(k.toLowerCase()));
-
-            //     if(matched.length < keyword.minimumKeywords + keyword.requiredKeywords.length) return;
-            //     if(!keyword.requiredKeywords.every((k: string) => matched.includes(k.toLowerCase()))) return;
-
-            //     const confidence = Number((matched.length / args.length * 100).toFixed(0));
-
-            //     if(confidence < 20) return;
-
-            //     const response = new Discord.EmbedBuilder()
-            //         .setColor(client.config_embeds.default)
-            //         .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ extension: "png", forceStatic: false }), url: `https://discord.com/users/${message.author.id}` })
-            //         .setTitle(keyword.title)
-            //         .setDescription(keyword.response)
-            //         .addFields (
-            //             { name: "Keywords", value: `\`${matched.join("\`, \`")}\`` }
-            //         )
-            //         .setFooter({ text: `${confidence}% confidence` })
-            //         .setTimestamp()
-
-            //     const buttons: any = new Discord.ActionRowBuilder()
-            //         .addComponents (
-            //             new Discord.ButtonBuilder()
-            //                 .setStyle(Discord.ButtonStyle.Secondary)
-            //                 .setCustomId(`delete-message-${message.author.id}`)
-            //                 .setEmoji("🗑️")
-            //         )
-
-            //     message.reply({ embeds: [response], components: [buttons] });
-            //     return;
-            // }
 
             const args = message.content.slice(main.legacyPrefix.length).split(/ +/);
 
