@@ -4,7 +4,6 @@ import * as Sentry from "@sentry/node";
 import CodeDrop from "./CodeDrop";
 import Command from "./Command";
 import Event from "./Event";
-import Keyword from "./Keyword";
 import LegacyCommand from "./LegacyCommand";
 
 import { categories, channels, embeds, main, roles } from "../config";
@@ -23,7 +22,6 @@ export default class ExtendedClient extends Client {
     public credit: typeof import("../util/credit");
     public drops: Collection<string, CodeDrop>;
     public events: Collection<string, Event>;
-    public keywords: Collection<string[], Keyword>;
     public legacyCommands: Collection<string, LegacyCommand>;
     public logButtonError: Function;
     public logCommandError: Function;
